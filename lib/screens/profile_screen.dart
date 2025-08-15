@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
   void _showMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -13,90 +16,69 @@ class ProfileScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Center(
+                  children: const [
+                    Center(
                       child: Text(
                         'Settings & Options',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.teal,
+                          color: Colors.transparent,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    // --- Account Settings Section ---
-                    const ProfileSectionTitle(title: 'Account'),
-                    const SizedBox(height: 8),
-                    const ProfileOption(
-                      icon: Icons.edit,
-                      title: 'Edit Profile',
-                    ),
-                    const ProfileOption(
+                    SizedBox(height: 20),
+                    ProfileSectionTitle(title: 'Account'),
+                    SizedBox(height: 8),
+                    ProfileOption(icon: Icons.edit, title: 'Edit Profile'),
+                    ProfileOption(
                       icon: Icons.notifications,
                       title: 'Notifications',
                     ),
-                    const ProfileOption(
-                      icon: Icons.lock,
-                      title: 'Privacy Settings',
-                    ),
-                    const SizedBox(height: 24),
-                    // --- Your Activity & Content Section ---
-                    const ProfileSectionTitle(title: 'Your Activity & Content'),
-                    const SizedBox(height: 8),
-                    const ProfileOption(
-                      icon: Icons.bookmark_border,
-                      title: 'Saved',
-                    ),
-                    const ProfileOption(
+                    ProfileOption(icon: Icons.lock, title: 'Privacy Settings'),
+                    SizedBox(height: 24),
+                    ProfileSectionTitle(title: 'Your Activity & Content'),
+                    SizedBox(height: 8),
+                    ProfileOption(icon: Icons.bookmark_border, title: 'Saved'),
+                    ProfileOption(
                       icon: Icons.archive_outlined,
                       title: 'Archive',
                     ),
-                    const ProfileOption(
-                      icon: Icons.history,
-                      title: 'Your Activity',
-                    ),
-                    const ProfileOption(
+                    ProfileOption(icon: Icons.history, title: 'Your Activity'),
+                    ProfileOption(
                       icon: Icons.alternate_email,
                       title: 'Tags and Mentions',
                     ),
-                    const ProfileOption(
+                    ProfileOption(
                       icon: Icons.favorite_border,
                       title: 'Favorites',
                     ),
-                    const ProfileOption(
+                    ProfileOption(
                       icon: Icons.people_alt_outlined,
                       title: 'Close Friends',
                     ),
-                    const ProfileOption(
-                      icon: Icons.block,
-                      title: 'Blocked',
-                    ),
-                    const SizedBox(height: 24),
-                    // --- General Settings Section ---
-                    const ProfileSectionTitle(title: 'General'),
-                    const SizedBox(height: 8),
-                    const ProfileOption(
+                    ProfileOption(icon: Icons.block, title: 'Blocked'),
+                    SizedBox(height: 24),
+                    ProfileSectionTitle(title: 'General'),
+                    SizedBox(height: 8),
+                    ProfileOption(
                       icon: Icons.language,
                       title: 'Language and Translations',
                     ),
-                    const ProfileOption(
+                    ProfileOption(
                       icon: Icons.schedule_outlined,
                       title: 'Time Management',
                     ),
-                    const ProfileOption(
+                    ProfileOption(
                       icon: Icons.verified_user_outlined,
                       title: 'Account Status',
                     ),
-                    const ProfileOption(
+                    ProfileOption(
                       icon: Icons.help_outline,
                       title: 'Help & Support',
                     ),
-                    const ProfileOption(
-                      icon: Icons.info_outline,
-                      title: 'About',
-                    ),
-                    const ProfileOption(
+                    ProfileOption(icon: Icons.info_outline, title: 'About'),
+                    ProfileOption(
                       icon: Icons.logout,
                       title: 'Logout',
                       isDestructive: true,
@@ -114,42 +96,56 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // The app bar for the profile page.
-      appBar: AppBar(
-        title: const Text('John Doe'),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => _showMenu(context),
-          ),
-        ],
-      ),
       body: CustomScrollView(
         slivers: [
+          SliverAppBar(
+            title: Text(
+              'Keshav Vyas',
+              style: GoogleFonts.robotoSlab(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+                fontSize: 20,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: const Color.fromARGB(0, 105, 103, 103),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => _showMenu(context),
+              ),
+            ],
+            floating: true,
+            elevation: 0,
+          ),
+
+          // Profile Header
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  const ProfileHeader(),
-                  const Divider(height: 32),
-                  // A row of stories is added here.
-                  const StoryRow(),
-                  const Divider(height: 32),
-                ],
-              ),
+              child: ProfileHeader(),
             ),
           ),
-          const PostsGrid(),
+
+          // Stories Row
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: StoryRow(),
+            ),
+          ),
+
+          // Posts Grid
+          PostsGrid(),
         ],
       ),
     );
   }
 }
 
-// A widget for the profile picture and user information at the top.
+// --- Rest of your widgets stay the same ---
+
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
 
@@ -159,51 +155,40 @@ class ProfileHeader extends StatelessWidget {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // --- Profile Picture Section ---
-            const CircleAvatar(
+          children: const [
+            CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.teal,
-              backgroundImage: NetworkImage('https://placehold.co/200x200/cccccc/000000?text=User'),
+              backgroundColor: Color.fromRGBO(15, 29, 37, 1),
+              backgroundImage: AssetImage('images/profile.png'),
             ),
-            // --- User Stats Section ---
-            const ProfileStat(count: 12, label: 'Posts'),
-            const ProfileStat(count: 1234, label: 'Followers'),
-            const ProfileStat(count: 567, label: 'Following'),
+            ProfileStat(count: 12, label: 'Posts'),
+            ProfileStat(count: 1234, label: 'Followers'),
+            ProfileStat(count: 567, label: 'Following'),
           ],
         ),
         const SizedBox(height: 16),
-        // --- User Details Section ---
         const Align(
           alignment: Alignment.centerLeft,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'John Doe',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                'Keshav Vyas',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 4),
               Text(
-                'john.doe@example.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                'keshavVyas@hotmail.com',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        // --- Edit Profile Button ---
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(
             onPressed: () {
-              // TODO: Implement edit profile logic here.
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Edit Profile Button Tapped')),
               );
@@ -216,7 +201,6 @@ class ProfileHeader extends StatelessWidget {
   }
 }
 
-// A reusable widget for the section titles (e.g., "Account", "General").
 class ProfileSectionTitle extends StatelessWidget {
   final String title;
   const ProfileSectionTitle({super.key, required this.title});
@@ -228,13 +212,12 @@ class ProfileSectionTitle extends StatelessWidget {
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Colors.teal,
+        color: Color.fromRGBO(15, 29, 37, 1),
       ),
     );
   }
 }
 
-// A reusable widget for each profile option item (e.g., "Edit Profile", "Logout").
 class ProfileOption extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -251,14 +234,14 @@ class ProfileOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         leading: Icon(
           icon,
-          color: isDestructive ? Colors.red : Colors.teal,
+          color: isDestructive
+              ? Colors.red
+              : const Color.fromRGBO(15, 29, 37, 1),
         ),
         title: Text(
           title,
@@ -269,26 +252,20 @@ class ProfileOption extends StatelessWidget {
         ),
         trailing: isDestructive ? null : const Icon(Icons.chevron_right),
         onTap: () {
-          // TODO: Implement navigation or action for each option.
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Tapped on $title')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Tapped on $title')));
         },
       ),
     );
   }
 }
 
-// A new reusable widget for the followers/following/posts count.
 class ProfileStat extends StatelessWidget {
   final int count;
   final String label;
 
-  const ProfileStat({
-    super.key,
-    required this.count,
-    required this.label,
-  });
+  const ProfileStat({super.key, required this.count, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -296,25 +273,15 @@ class ProfileStat extends StatelessWidget {
       children: [
         Text(
           count.toString(),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
-        ),
+        Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
       ],
     );
   }
 }
 
-// A widget to display a horizontal scrollable list of stories.
 class StoryRow extends StatelessWidget {
   const StoryRow({super.key});
 
@@ -324,17 +291,16 @@ class StoryRow extends StatelessWidget {
       height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 8, // Placeholder for stories
+        itemCount: 8,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 35,
-                  backgroundColor: Colors.teal,
-                  // Placeholder image for the story.
-                  backgroundImage: NetworkImage('https://placehold.co/100x100/cccccc/000000?text=Story ${index + 1}'),
+                  backgroundColor: Color.fromRGBO(15, 29, 37, 1),
+                  backgroundImage: AssetImage('images/story.png'),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -350,7 +316,6 @@ class StoryRow extends StatelessWidget {
   }
 }
 
-// A widget to display a grid of posts.
 class PostsGrid extends StatelessWidget {
   const PostsGrid({super.key});
 
@@ -358,18 +323,17 @@ class PostsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverGrid.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3, // 3 columns
+        crossAxisCount: 3,
         crossAxisSpacing: 4.0,
         mainAxisSpacing: 4.0,
       ),
-      itemCount: 30, // Placeholder for 30 posts
+      itemCount: 12,
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
             color: Colors.grey.shade300,
-            image: DecorationImage(
-              // Placeholder image for the recipe post.
-              image: NetworkImage('https://placehold.co/200x200/cccccc/000000?text=Post ${index + 1}'),
+            image: const DecorationImage(
+              image: AssetImage('images/food.png'),
               fit: BoxFit.cover,
             ),
           ),
