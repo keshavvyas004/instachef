@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instachef/screens/home_screen.dart';
+import 'package:instachef/screens/login_screen.dart';
 import 'package:instachef/screens/search_screen.dart';
 import 'package:instachef/screens/post_screen.dart';
 import 'package:instachef/screens/profile_screen.dart';
+import 'package:instachef/screens/signup_screen_1.dart';
+import 'package:instachef/screens/signup_screen_2.dart';
+import 'package:instachef/screens/signup_screen_3.dart';
 
-// Main entry point of the application.
 void main() {
   runApp(const MyApp());
 }
@@ -16,13 +19,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: 'home',
+      initialRoute: 'login',
       routes: {
+        'login': (context) => const MyLogin(),
         'home': (context) => const MainNavigationScreen(),
-        // Add other routes as needed
+        'register_1': (context) => const SignUp1(),
+        'register_2': (context) => const SignUp2(),
+        'register_3': (context) => const SignUp3(),
       },
       title: 'InstaChef',
-      theme: ThemeData(canvasColor: const Color(0xFF2196F3)),
+      theme: ThemeData(canvasColor: const Color.fromRGBO(15, 29, 37, 1)),
+      home: const MainNavigationScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -39,10 +46,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    // The rich HomeScreen widget from 'home_screen.dart' will be used here.
     HomeScreen(),
     SearchScreen(),
-    PostScreen(),
+    RecipePostScreen(),
     ProfileScreen(),
   ];
 
@@ -54,13 +60,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isHomeScreen = _selectedIndex == 0;
-
     return Scaffold(
-      appBar: isHomeScreen
-          ? AppBar(
+      appBar: AppBar(
         toolbarHeight: 60,
-        backgroundColor: const Color.fromARGB(255, 7, 223, 0),
+        backgroundColor: const Color.fromRGBO(15, 29, 37, 1),
         title: Text(
           'InstaChef',
           style: GoogleFonts.cookie(
@@ -95,13 +98,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             ),
           ),
         ],
-      )
-          : null,
+      ),
       body: Center(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: _widgetOptions,
-        ),
+        child: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -110,8 +109,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           hoverColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
-          backgroundColor: Colors.blue[700],
-          selectedItemColor: const Color.fromARGB(255, 7, 223, 0),
+          backgroundColor: const Color.fromRGBO(15, 29, 37, 1),
+          selectedItemColor: const Color.fromRGBO(247, 158, 27, 1),
           unselectedItemColor: Colors.white,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
