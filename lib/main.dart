@@ -47,7 +47,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    SearchScreen(),
+    MySearchScreen(),
     RecipePostScreen(),
     ProfileScreen(),
   ];

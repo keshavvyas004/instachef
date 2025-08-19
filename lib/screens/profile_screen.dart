@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'recipe_data.dart';
+import 'RecipeDetailScreen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -23,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.transparent,
+                          color: Colors.black, // FIXED (was transparent)
                         ),
                       ),
                     ),
@@ -137,33 +140,33 @@ class ProfileScreen extends StatelessWidget {
           ),
 
           // Posts Grid
-          PostsGrid(),
+          const PostsGrid(),
         ],
       ),
     );
   }
 }
 
-// --- Rest of your widgets stay the same ---
-
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final recipes = RecipeData.recipes;
+
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
-            CircleAvatar(
+          children: [
+            const CircleAvatar(
               radius: 50,
               backgroundColor: Color.fromRGBO(15, 29, 37, 1),
               backgroundImage: AssetImage('images/profile.png'),
             ),
-            ProfileStat(count: 12, label: 'Posts'),
-            ProfileStat(count: 1234, label: 'Followers'),
-            ProfileStat(count: 567, label: 'Following'),
+            ProfileStat(count: recipes.length, label: 'Posts'),
+            const ProfileStat(count: 1234, label: 'Followers'),
+            const ProfileStat(count: 567, label: 'Following'),
           ],
         ),
         const SizedBox(height: 16),
@@ -189,8 +192,9 @@ class ProfileHeader extends StatelessWidget {
           width: double.infinity,
           child: OutlinedButton(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit Profile Button Tapped')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const EditProfileScreen()),
               );
             },
             child: const Text('Edit Profile'),
@@ -252,9 +256,16 @@ class ProfileOption extends StatelessWidget {
         ),
         trailing: isDestructive ? null : const Icon(Icons.chevron_right),
         onTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Tapped on $title')));
+          if (title == 'Edit Profile') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+            );
+          } else {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Tapped on $title')));
+          }
         },
       ),
     );
@@ -321,24 +332,41 @@ class PostsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid.builder(
+    final recipes = RecipeData.recipes;
+
+    return SliverGrid(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 4.0,
         mainAxisSpacing: 4.0,
       ),
-      itemCount: 12,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            image: const DecorationImage(
-              image: AssetImage('images/food.png'),
-              fit: BoxFit.cover,
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final recipe = recipes[index];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RecipeDetailScreen(recipe: recipe),
+              ),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              image: recipe.images.isNotEmpty
+                  ? DecorationImage(
+                      image: FileImage(recipe.images.first),
+                      fit: BoxFit.cover,
+                    )
+                  : const DecorationImage(
+                      image: AssetImage('images/food.png'),
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
         );
-      },
+      }, childCount: recipes.length),
     );
   }
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'recipe_data.dart';
+import 'recipe_model.dart';
 
 class RecipePostScreen extends StatefulWidget {
   const RecipePostScreen({super.key});
@@ -13,12 +15,17 @@ class RecipePostScreen extends StatefulWidget {
 class _RecipePostScreenState extends State<RecipePostScreen> {
   final ImagePicker _picker = ImagePicker();
   List<File> _mediaFiles = [];
-  final List<String> _ingredients = [];
-  final TextEditingController _ingredientController = TextEditingController();
-  final TextEditingController _recipeController = TextEditingController();
-  final TextEditingController _tagsController = TextEditingController();
 
-  // Pick an image
+  final List<String> _ingredients = [];
+  final List<String> _steps = [];
+  final List<String> _tags = []; // ✅ Tags list
+
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _ingredientController = TextEditingController();
+  final TextEditingController _stepController = TextEditingController();
+  final TextEditingController _tagController =
+      TextEditingController(); // ✅ Tag input
+
   Future<void> _pickMedia() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -28,7 +35,6 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
     }
   }
 
-  // Add ingredient
   void _addIngredient() {
     final ingredient = _ingredientController.text.trim();
     if (ingredient.isNotEmpty) {
@@ -37,6 +43,55 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
         _ingredientController.clear();
       });
     }
+  }
+
+  void _addStep() {
+    final step = _stepController.text.trim();
+    if (step.isNotEmpty) {
+      setState(() {
+        _steps.add(step);
+        _stepController.clear();
+      });
+    }
+  }
+
+  void _addTag() {
+    final tag = _tagController.text.trim();
+    if (tag.isNotEmpty) {
+      setState(() {
+        _tags.add(tag.startsWith("#") ? tag : "#$tag"); // ✅ Auto add #
+        _tagController.clear();
+      });
+    }
+  }
+
+  void _postRecipe() {
+    if (_mediaFiles.isEmpty ||
+        _steps.isEmpty ||
+        _titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please add a title, at least 1 image and steps"),
+        ),
+      );
+      return;
+    }
+
+    final recipe = Recipe(
+      title: _titleController.text.trim(),
+      images: List.from(_mediaFiles),
+      ingredients: List.from(_ingredients),
+      steps: List.from(_steps),
+      tags: List.from(_tags), // ✅ Save tags as list
+    );
+
+    RecipeData.recipes.add(recipe);
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Recipe Posted!")));
+
+    Navigator.pushReplacementNamed(context, 'home');
   }
 
   @override
@@ -59,7 +114,6 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Center(
                 child: Text(
                   "Post Recipe",
@@ -71,9 +125,29 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
               ),
               const SizedBox(height: 20),
 
-              // 1️⃣ Upload Media
+              // ✅ Recipe Title
               Text(
-                "Upload Images / Videos",
+                "Recipe Title",
+                style: GoogleFonts.playfairDisplay(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: Icon(Icons.title, color: Colors.black),
+                  hintText: "Enter recipe title",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // ✅ Upload Multiple Images
+              Text(
+                "Upload Images",
                 style: GoogleFonts.playfairDisplay(
                   color: Colors.white,
                   fontSize: 20,
@@ -123,17 +197,13 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
                       )
                       .toList(),
                 ),
-              SizedBox(height: 10),
-              // Upload Button
+              const SizedBox(height: 10),
+
               InkWell(
                 onTap: _pickMedia,
                 child: Container(
                   height: 100,
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.10,
-                    right: MediaQuery.of(context).size.width * 0.10,
-                  ),
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -148,7 +218,7 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
 
               const SizedBox(height: 20),
 
-              // 2️⃣ Ingredients
+              // ✅ Ingredients
               Text(
                 "Ingredients",
                 style: GoogleFonts.playfairDisplay(
@@ -156,12 +226,13 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
                   fontSize: 20,
                 ),
               ),
-              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _ingredientController,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _addIngredient(), // ✅ Press Enter
                       decoration: const InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -182,13 +253,13 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
                 children: _ingredients
                     .map(
                       (ingredient) => Chip(
-                        backgroundColor: Colors.transparent,
-                        shape: const StadiumBorder(
-                          side: BorderSide(color: Colors.white),
-                        ),
                         label: Text(
                           ingredient,
                           style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        shape: const StadiumBorder(
+                          side: BorderSide(color: Colors.white),
                         ),
                         deleteIcon: const Icon(
                           Icons.close,
@@ -203,30 +274,77 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
                     )
                     .toList(),
               ),
+
               const SizedBox(height: 20),
 
-              // 3️⃣ Full Recipe
+              // ✅ Steps
               Text(
-                "Full Recipe Details",
+                "Steps",
                 style: GoogleFonts.playfairDisplay(
                   color: Colors.white,
                   fontSize: 20,
                 ),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _recipeController,
-                maxLines: 10,
-                decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Write the recipe step-by-step...",
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _stepController,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _addStep(), // ✅ Press Enter
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: Icon(
+                          Icons.format_list_numbered,
+                          color: Colors.black,
+                        ),
+                        hintText: "Add a step",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle, color: Colors.white),
+                    onPressed: _addStep,
+                  ),
+                ],
               ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _steps.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  String step = entry.value;
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: orange,
+                      child: Text(
+                        "${index + 1}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      step,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _steps.removeAt(index);
+                        });
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+
               const SizedBox(height: 20),
 
-              // 4️⃣ Tags
+              // ✅ Tags
               Text(
                 "Tags",
                 style: GoogleFonts.playfairDisplay(
@@ -234,20 +352,57 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
                   fontSize: 20,
                 ),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _tagsController,
-                decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: Icon(Icons.tag, color: Colors.black),
-                  hintText: "Add tags using # (e.g., #vegan #dessert)",
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _tagController,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _addTag(), // ✅ Press Enter
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        prefixIcon: Icon(Icons.tag, color: Colors.black),
+                        hintText: "Add a tag (e.g., vegan, dessert)",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle, color: Colors.white),
+                    onPressed: _addTag,
+                  ),
+                ],
               ),
+              Wrap(
+                spacing: 8,
+                children: _tags
+                    .map(
+                      (tag) => Chip(
+                        label: Text(
+                          tag,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.transparent,
+                        shape: const StadiumBorder(
+                          side: BorderSide(color: Colors.white),
+                        ),
+                        deleteIcon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                        ),
+                        onDeleted: () {
+                          setState(() {
+                            _tags.remove(tag);
+                          });
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
+
               const SizedBox(height: 30),
 
-              // Post Button
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -257,9 +412,7 @@ class _RecipePostScreenState extends State<RecipePostScreen> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
-                    // TODO: Handle post action
-                  },
+                  onPressed: _postRecipe,
                   child: const Text(
                     "Post",
                     style: TextStyle(fontSize: 24, color: Colors.white),
