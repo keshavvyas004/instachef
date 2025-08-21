@@ -8,16 +8,28 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  google_fonts: ^6.1.0
-  path_provider: ^2.0.15
+  google_fonts: ^6.3.0
+  image_picker: ^1.0.7
+  smooth_page_indicator: ^1.1.0
+  dart_openai: ^5.1.0
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_native_splash: ^2.4.0
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
   assets:
-    - images/slogo.jpg
+    - images/logo.png
+    - images/profile.png
+    - images/food.png
+    - images/story.png
+flutter_native_splash:
+  color: "#0f1d25" # background color
+  image: images/logo.png # your logo file
+  android: true
+  ios: true
+  web: true
