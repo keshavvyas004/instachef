@@ -5,6 +5,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'recipe_model.dart';
 import 'recipe_data.dart';
 import 'RecipeDetailScreen.dart';
+import 'saved_recipes_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       recipe.isLiked = !recipe.isLiked;
       recipe.likeCount += recipe.isLiked ? 1 : -1;
+    });
+  }
+
+  void _toggleSave(Recipe recipe) {
+    setState(() {
+      recipe.isSaved = !recipe.isSaved;
     });
   }
 
@@ -69,6 +76,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // ✅ Title above image (centered)
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Center(
+                          child: Text(
+                            recipe.title,
+                            style: GoogleFonts.cookie(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromRGBO(15, 29, 37, 1),
+                            ),
+                          ),
+                        ),
+                      ),
+
                       // ✅ Recipe Images with PageView
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
@@ -79,8 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 300,
                           child: PageView.builder(
                             controller: controller,
-                            physics:
-                                const BouncingScrollPhysics(), // smooth scroll
+                            physics: const BouncingScrollPhysics(),
                             itemCount: recipe.images.length,
                             itemBuilder: (context, imgIndex) {
                               return GestureDetector(
@@ -95,9 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 child: Image.file(
                                   recipe.images[imgIndex],
-                                  fit: BoxFit.fitHeight,
-                                  width: MediaQuery.of(context).size.width*0.5,
-                                  height: MediaQuery.of(context).size.width*0.5,
+                                  fit: BoxFit.contain, // ✅ full image visible
+                                  width: double.infinity,
+                                  height: 300,
                                 ),
                               );
                             },
@@ -123,54 +144,64 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                      // Title
+                      // ✅ Like + Comment + Save Buttons
                       Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Text(
-                          recipe.title,
-                          style: GoogleFonts.cookie(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromRGBO(15, 29, 37, 1),
-                          ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            // Like
+                            IconButton(
+                              icon: Icon(
+                                recipe.isLiked
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: recipe.isLiked
+                                    ? Colors.red
+                                    : Colors.black,
+                              ),
+                              onPressed: () => _toggleLike(recipe),
+                            ),
+                            Text("${recipe.likeCount}"),
+                            const SizedBox(width: 16),
+
+                            // Comment
+                            IconButton(
+                              icon: const Icon(
+                                Icons.comment,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.white,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20),
+                                    ),
+                                  ),
+                                  builder: (_) => _buildCommentSheet(recipe),
+                                );
+                              },
+                            ),
+                            Text("${recipe.comments.length}"),
+                            const SizedBox(width: 16),
+
+                            // Save
+                            IconButton(
+                              icon: Icon(
+                                recipe.isSaved
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
+                                color: recipe.isSaved
+                                    ? Colors.blue
+                                    : Colors.black,
+                              ),
+                              onPressed: () => _toggleSave(recipe),
+                            ),
+                          ],
                         ),
                       ),
-
-                      // ✅ Like + Comment Buttons
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              recipe.isLiked
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: recipe.isLiked ? Colors.red : Colors.black,
-                            ),
-                            onPressed: () => _toggleLike(recipe),
-                          ),
-                          Text("${recipe.likeCount}"),
-                          const SizedBox(width: 16),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.comment,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.white,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                ),
-                                builder: (_) => _buildCommentSheet(recipe),
-                              );
-                            },
-                          ),
-                          Text("${recipe.comments.length}"),
-                        ],
-                      ),
+                      const SizedBox(height: 12),
                     ],
                   ),
                 );

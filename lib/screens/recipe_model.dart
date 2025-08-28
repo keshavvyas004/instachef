@@ -8,6 +8,7 @@ class Recipe {
   List<String> tags;
   int likeCount;
   bool isLiked;
+  bool isSaved;
   List<String> comments;
 
   Recipe({
@@ -19,5 +20,6 @@ class Recipe {
     this.likeCount = 0,
     this.isLiked = false,
     List<String>? comments,
+    this.isSaved = false,
   }) : comments = comments ?? [];
 }

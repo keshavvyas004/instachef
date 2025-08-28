@@ -138,7 +138,7 @@ class _MyLoginState extends State<MyLogin> {
                           Navigator.pushReplacementNamed(context, 'register_1');
                         },
                         child: const Text(
-                          'Not A User? Register',
+                          'Not a user? Register',
                           style: TextStyle(fontSize: 20),
                         ),
                       ),

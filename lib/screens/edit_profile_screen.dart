@@ -34,20 +34,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
-      appBar: AppBar(
-        toolbarHeight: 60,
-        backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
-        title: Text(
-          'InstaChef',
-          style: GoogleFonts.cookie(
-            color: const Color.fromARGB(255, 0, 0, 0),
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-            fontSize: 40,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(
@@ -138,7 +124,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         fillColor: Colors.white,
                         filled: true,
                         border: OutlineInputBorder(),
-                        hintText: "Password",
+                        hintText: "Old Password",
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        prefixIconColor: Colors.black,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(),
+                        hintText: "New Password",
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        prefixIconColor: Colors.black,
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(),
+                        hintText: "Confirm Password",
                         prefixIcon: Icon(Icons.lock),
                       ),
                     ),
@@ -169,6 +185,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(247, 158, 27, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        minimumSize: const Size(200, 50),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Back",
+                        style: TextStyle(fontSize: 24, color: Colors.white),
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

@@ -41,14 +41,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                height: MediaQuery.of(context).size.width * 0.5,
-                width: MediaQuery.of(context).size.width * 0.5,
+                height: MediaQuery.of(context).size.width * 0.80,
+                width: MediaQuery.of(context).size.width * 0.80,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: recipe.images.length,
                   itemBuilder: (context, index) {
                     return ClipRRect(
                       borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30),
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30),
                       ),
@@ -56,7 +58,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         recipe.images[index],
                         height: MediaQuery.of(context).size.width * 0.5,
                         width: MediaQuery.of(context).size.width * 0.5,
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.contain,
                       ),
                     );
                   },

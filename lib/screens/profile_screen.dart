@@ -1,8 +1,11 @@
+import 'dart:io'; // ✅ Needed for FileImage
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:instachef/screens/login_screen.dart';
 import 'recipe_data.dart';
 import 'RecipeDetailScreen.dart';
 import 'edit_profile_screen.dart';
+import 'saved_recipes_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,85 +13,116 @@ class ProfileScreen extends StatelessWidget {
   void _showMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
-        return Container(
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Center(
-                      child: Text(
-                        'Settings & Options',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // FIXED (was transparent)
-                        ),
-                      ),
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Center(
+                  child: Text(
+                    'Settings & Options',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
-                    SizedBox(height: 20),
-                    ProfileSectionTitle(title: 'Account'),
-                    SizedBox(height: 8),
-                    ProfileOption(icon: Icons.edit, title: 'Edit Profile'),
-                    ProfileOption(
-                      icon: Icons.notifications,
-                      title: 'Notifications',
-                    ),
-                    ProfileOption(icon: Icons.lock, title: 'Privacy Settings'),
-                    SizedBox(height: 24),
-                    ProfileSectionTitle(title: 'Your Activity & Content'),
-                    SizedBox(height: 8),
-                    ProfileOption(icon: Icons.bookmark_border, title: 'Saved'),
-                    ProfileOption(
-                      icon: Icons.archive_outlined,
-                      title: 'Archive',
-                    ),
-                    ProfileOption(icon: Icons.history, title: 'Your Activity'),
-                    ProfileOption(
-                      icon: Icons.alternate_email,
-                      title: 'Tags and Mentions',
-                    ),
-                    ProfileOption(
-                      icon: Icons.favorite_border,
-                      title: 'Favorites',
-                    ),
-                    ProfileOption(
-                      icon: Icons.people_alt_outlined,
-                      title: 'Close Friends',
-                    ),
-                    ProfileOption(icon: Icons.block, title: 'Blocked'),
-                    SizedBox(height: 24),
-                    ProfileSectionTitle(title: 'General'),
-                    SizedBox(height: 8),
-                    ProfileOption(
-                      icon: Icons.language,
-                      title: 'Language and Translations',
-                    ),
-                    ProfileOption(
-                      icon: Icons.schedule_outlined,
-                      title: 'Time Management',
-                    ),
-                    ProfileOption(
-                      icon: Icons.verified_user_outlined,
-                      title: 'Account Status',
-                    ),
-                    ProfileOption(
-                      icon: Icons.help_outline,
-                      title: 'Help & Support',
-                    ),
-                    ProfileOption(icon: Icons.info_outline, title: 'About'),
-                    ProfileOption(
-                      icon: Icons.logout,
-                      title: 'Logout',
-                      isDestructive: true,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 20),
+
+                // 🔹 Account Section
+                const ProfileSectionTitle(title: 'Account'),
+                const SizedBox(height: 8),
+                const ProfileOption(icon: Icons.edit, title: 'Edit Profile'),
+                const ProfileOption(
+                  icon: Icons.notifications,
+                  title: 'Notifications',
+                ),
+                const ProfileOption(
+                  icon: Icons.lock,
+                  title: 'Privacy Settings',
+                ),
+
+                const SizedBox(height: 24),
+
+                // 🔹 Activity Section
+                const ProfileSectionTitle(title: 'Your Activity & Content'),
+                const SizedBox(height: 8),
+                ProfileOption(
+                  icon: Icons.bookmark,
+                  title: 'Saved Recipes',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SavedRecipesScreen(),
+                      ),
+                    );
+                  },
+                ),
+                const ProfileOption(
+                  icon: Icons.archive_outlined,
+                  title: 'Archive',
+                ),
+                const ProfileOption(
+                  icon: Icons.history,
+                  title: 'Your Activity',
+                ),
+                const ProfileOption(
+                  icon: Icons.alternate_email,
+                  title: 'Tags and Mentions',
+                ),
+                const ProfileOption(
+                  icon: Icons.favorite_border,
+                  title: 'Favorites',
+                ),
+                const ProfileOption(
+                  icon: Icons.people_alt_outlined,
+                  title: 'Close Friends',
+                ),
+                const ProfileOption(icon: Icons.block, title: 'Blocked'),
+
+                const SizedBox(height: 24),
+
+                // 🔹 General Section
+                const ProfileSectionTitle(title: 'General'),
+                const SizedBox(height: 8),
+                const ProfileOption(
+                  icon: Icons.language,
+                  title: 'Language and Translations',
+                ),
+                const ProfileOption(
+                  icon: Icons.schedule_outlined,
+                  title: 'Time Management',
+                ),
+                const ProfileOption(
+                  icon: Icons.verified_user_outlined,
+                  title: 'Account Status',
+                ),
+                const ProfileOption(
+                  icon: Icons.help_outline,
+                  title: 'Help & Support',
+                ),
+                const ProfileOption(icon: Icons.info_outline, title: 'About'),
+                ProfileOption(
+                  icon: Icons.logout,
+                  title: 'Logout',
+                  isDestructive: true,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MyLogin()),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         );
@@ -112,10 +146,10 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             centerTitle: true,
-            backgroundColor: const Color.fromARGB(0, 105, 103, 103),
+            backgroundColor: Colors.transparent,
             actions: [
               IconButton(
-                icon: const Icon(Icons.menu),
+                icon: const Icon(Icons.menu, color: Colors.black),
                 onPressed: () => _showMenu(context),
               ),
             ],
@@ -147,45 +181,35 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
+// 🔹 Profile Header
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
-
   @override
   Widget build(BuildContext context) {
     final recipes = RecipeData.recipes;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const CircleAvatar(
-              radius: 50,
+              radius: 60,
               backgroundColor: Color.fromRGBO(15, 29, 37, 1),
               backgroundImage: AssetImage('images/profile.png'),
             ),
+            const SizedBox(width: 40),
             ProfileStat(count: recipes.length, label: 'Posts'),
-            const ProfileStat(count: 1234, label: 'Followers'),
-            const ProfileStat(count: 567, label: 'Following'),
           ],
         ),
         const SizedBox(height: 16),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Keshav Vyas',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'keshavVyas@hotmail.com',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            ],
-          ),
+        const Text(
+          'Keshav Vyas',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'keshavvyas192002@gmail.com',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
         const SizedBox(height: 16),
         SizedBox(
@@ -205,6 +229,7 @@ class ProfileHeader extends StatelessWidget {
   }
 }
 
+// 🔹 Section Title
 class ProfileSectionTitle extends StatelessWidget {
   final String title;
   const ProfileSectionTitle({super.key, required this.title});
@@ -222,16 +247,19 @@ class ProfileSectionTitle extends StatelessWidget {
   }
 }
 
+// 🔹 Profile Option Tile
 class ProfileOption extends StatelessWidget {
   final IconData icon;
   final String title;
   final bool isDestructive;
+  final VoidCallback? onTap;
 
   const ProfileOption({
     super.key,
     required this.icon,
     required this.title,
     this.isDestructive = false,
+    this.onTap,
   });
 
   @override
@@ -239,7 +267,7 @@ class ProfileOption extends StatelessWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
       child: ListTile(
         leading: Icon(
           icon,
@@ -255,23 +283,26 @@ class ProfileOption extends StatelessWidget {
           ),
         ),
         trailing: isDestructive ? null : const Icon(Icons.chevron_right),
-        onTap: () {
-          if (title == 'Edit Profile') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-            );
-          } else {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Tapped on $title')));
-          }
-        },
+        onTap:
+            onTap ??
+            () {
+              if (title == 'Edit Profile') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                );
+              } else {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Tapped on $title')));
+              }
+            },
       ),
     );
   }
 }
 
+// 🔹 Profile Stat
 class ProfileStat extends StatelessWidget {
   final int count;
   final String label;
@@ -293,9 +324,8 @@ class ProfileStat extends StatelessWidget {
   }
 }
 
+// 🔹 Story Row
 class StoryRow extends StatelessWidget {
-  const StoryRow({super.key});
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -327,6 +357,7 @@ class StoryRow extends StatelessWidget {
   }
 }
 
+// 🔹 Posts Grid
 class PostsGrid extends StatelessWidget {
   const PostsGrid({super.key});
 
@@ -352,16 +383,18 @@ class PostsGrid extends StatelessWidget {
             );
           },
           child: Container(
+            height: 200,
+            width: 200,
             decoration: BoxDecoration(
               color: Colors.grey.shade300,
               image: recipe.images.isNotEmpty
                   ? DecorationImage(
                       image: FileImage(recipe.images.first),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     )
                   : const DecorationImage(
                       image: AssetImage('images/food.png'),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitHeight,
                     ),
             ),
           ),

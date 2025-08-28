@@ -74,30 +74,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
         ),
         automaticallyImplyLeading: false,
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.favorite_border),
-                  color: Colors.white,
-                  onPressed: () {
-                    debugPrint('Request button pressed!');
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.sms_outlined),
-                  color: Colors.white,
-                  onPressed: () {
-                    debugPrint('Message button pressed');
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
       body: Center(
         child: IndexedStack(index: _selectedIndex, children: _widgetOptions),
